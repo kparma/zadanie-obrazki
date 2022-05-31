@@ -1,19 +1,29 @@
-import Pixabay from "./PixabayAPI"
+import React, { useCallback, useState } from 'react';
+import { AppContainer } from './App.styled';
+import Searchbar from './Searchbar/Searchbar';
+import { fetchImages } from './PixabayAPI';
+import ImagesGallery from './ImageGallery/ImageGallery';
 
-export const App = () => {
+export default function App() {
+  const [images, setImages] = useState();
+
+  const onSearch = useCallback((event) => {
+    if (event && event.target) {
+      fetchImages(event.target.value)
+        .then(res => res.json())
+        .then(results => {
+        if (results && results.hits) {
+          setImages(results.hits);
+        }
+      });
+    }
+  });
+
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
+    <AppContainer>
+      <Searchbar handleNameChange={onSearch} />
+      <ImagesGallery images={images} />
 
-    >
-      React template - Mariusz Gebel
-    </div>
+    </AppContainer>
   );
 };
